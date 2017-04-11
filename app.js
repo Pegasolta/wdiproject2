@@ -16,7 +16,38 @@ db.once('open', function () {
   console.log('really really connected')
 })
 
+// transform form data to req.body
+var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
+app.use(bodyParser.json())
 
+
+app.get('/', function (req, res) {
+  res.render('')
+})
+
+// setup the ejs template
+app.set('view engine', 'ejs')
+
+// setup the method override
+var methodOverride = require('method-override')
+app.use(methodOverride('_method'))
+
+// require the users_controller
+var usersController = require('./controllers/users_controller')
+app.use(usersController)
+
+// require the checkout_controller
+var checkoutController = require('./controllers/checkout_controller')
+app.use(checkoutController)
+
+
+
+app.use(function (req, res) {
+  res.send('error found')
+})
 
 app.listen(port, function () {
   console.log('app is running at ' + port)
