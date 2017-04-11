@@ -11,21 +11,21 @@ mongoose.connect(dbURI)
 // check if our connection is okay
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function () {
-  // we're connected!
-  console.log('really really connected')
+db.once('open', function() {
+    // we're connected!
+    console.log('really really connected')
 })
 
 // transform form data to req.body
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }))
 app.use(bodyParser.json())
 
 
-app.get('/', function (req, res) {
-  res.render('')
+app.get('/', function(req, res) {
+    res.render('backendhome')
 })
 
 // setup the ejs template
@@ -46,9 +46,9 @@ app.use(checkoutController)
 
 
 app.use(function (req, res) {
-  res.send('error found')
+    res.send('error found')
 })
 
 app.listen(port, function () {
-  console.log('app is running at ' + port)
+    console.log('app is running at ' + port)
 })
