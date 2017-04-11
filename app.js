@@ -31,9 +31,9 @@ app.get('/', function(req, res) {
 // setup the ejs template
 app.set('view engine', 'ejs')
 
-// setting the layout structure
-var ejsLayouts = require('express-ejs-layouts')
-app.use(ejsLayouts)
+// // setting the layout structure
+// var ejsLayouts = require('express-ejs-layouts')
+// app.use(ejsLayouts)
 
 // setup the method override
 var methodOverride = require('method-override')
