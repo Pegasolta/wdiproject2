@@ -1,88 +1,100 @@
 require('dotenv').config({
     silent: true
 })
-var express = require('express')
+var express = require("express")
+var app = express()
+var session = require("express-session")
 var ejsLayouts = require('express-ejs-layouts')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
-var session = require('express-session')
-var passport = require('./config/passport')
+var MongoStore = require('connect-mongo')(session)
+var methodOverride = require('method-override')
 var flash = require('connect-flash')
-var app = express()
-var isLoggedIn = require('./middleware/isLoggedIn')
-var csurf = require("csurf")
-var port = process.env.PORT || 4000
+
+// use sessions for tracking logins
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoStore({
+        url: process.env.MONGODB_URI
+    })
+}))
+
+// make user ID available in templates
+app.use(function (req, res, next) {
+  res.locals.currentUser = req.session.userId
+  next()
+})
 
 // mongoose setup
-var dbURI = process.env.PROD_MONGODB || 'mongodb://localhost:27017/wdi-project2'
-mongoose.connect(dbURI)
-mongoose.Promise = global.promise
+if (process.env.NODE_ENV === 'test') {
+  mongoose.connect('mongodb://localhost/wdi-project2')
+} else {
+  mongoose.connect(process.env.MONGODB_URI)
+}
+// mongoose.Promise = global.promise
 
 // check if our connection is okay
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function() {
+db.once('open', function () {
     // we're connected!
     console.log('really really connected')
 })
 
 // setup the ejs template
 app.set('view engine', 'ejs')
-
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true
-}))
-// initialize the passport configuration and session as middleware
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(flash())
-
-app.use(require('morgan')('dev'))
-app.use(bodyParser.urlencoded({
-    extended: true
-}))
-app.use(bodyParser.json())
 app.use(ejsLayouts)
 
-app.use(function(req, res, next) {
+app.use(require('morgan')('dev'))
+app.use(flash())
+app.use(function (req, res, next) {
     // before every route, attach the flash messages and current user to res.locals
     res.locals.alerts = req.flash()
     res.locals.currentUser = req.user
     next()
 })
 
+// parse incoming requests
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+// // // serve static files from /public
+// app.use(express.static(__dirname + '/assets'))
+
 // setup the method override
-var methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
-app.use('/auth', require('./controllers/auth'))
+// include controllers
+app.use('/', require('./controllers/auth'))
 
-// // require the users_controller
-// var usersController = require('./controllers/users_controller')
-// app.use(usersController)
+app.get('/', function (req, res, next) {
+  res.render('index', { title: 'Home' })
+})
+
+// // catch 404 and forward to error handler
+// app.use(function(req, res, next) {
+//   var err = new Error('File Not Found')
+//   err.status = 404
+//   next(err)
+// })
 //
-// // require the checkout_controller
-// var checkoutController = require('./controllers/checkout_controller')
-// app.use(checkoutController)
+// // error handler
+// // define as the last app.use callback
+// app.use(function(err, req, res, next) {
+//   res.status(err.status || 500)
+//   res.render('error', {
+//     message: err.message,
+//     error: {}
+//   })
+// })
 
-// Always setup your loading page at the end after you require everything
-app.get('/', function(req, res) {
-    console.log("login page runs");
-    res.render('auth/login')
-})
+var server
+if (process.env.NODE_ENV === 'test') {
+    server = app.listen(process.env.PORT || 4000)
+} else {
+    server = app.listen(process.env.PORT || 3300)
+}
 
-app.use(isLoggedIn)
-// anything below here requires the user to be logged in
-app.get('/backendhome', function(req, res) {
-    res.render('backendhome')
-})
-
-app.use(function(req, res) {
-    res.send('error found')
-})
-
-app.listen(port, function() {
-    console.log('app is running at ' + port)
-})
+module.exports = server
