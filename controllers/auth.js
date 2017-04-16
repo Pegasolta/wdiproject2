@@ -1,18 +1,17 @@
 var express = require('express')
 var router = express.Router()
 var User = require("../models/user")
-var mid = require('../middleware/isLoggedIn')
 var passport = require('../config/passport')
 
 // GET /logout
-router.get('/logout', function(req, res) {
+router.get('/logout', function (req, res) {
     req.logout()
     req.flash('success', 'You have logged out')
     res.redirect('/')
 })
 
 // GET /signup
-router.get('/signup', function(req, res) {
+router.get('/signup', function (req, res) {
     res.render('signup')
 })
 
@@ -29,7 +28,7 @@ router.post('/signup', function (req, res, next) {
         }
 
         // create object with form input
-        var newUser = new User ({
+        var newUser = new User({
             email: req.body.email,
             name: req.body.name,
             password: req.body.password
@@ -55,7 +54,7 @@ router.post('/signup', function (req, res, next) {
 })
 
 // GET /login
-router.get('/login', function(req, res) {
+router.get('/login', function (req, res) {
     res.render('login')
 })
 

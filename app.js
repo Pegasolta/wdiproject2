@@ -1,9 +1,9 @@
 require('dotenv').config({
     silent: true
 })
-var express = require("express")
+var express = require('express')
 var app = express()
-var session = require("express-session")
+var session = require('express-session')
 var ejsLayouts = require('express-ejs-layouts')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
