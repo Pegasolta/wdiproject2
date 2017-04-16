@@ -10,6 +10,8 @@ var mongoose = require('mongoose')
 var MongoStore = require('connect-mongo')(session)
 var methodOverride = require('method-override')
 var flash = require('connect-flash')
+var passport = require('./config/passport')
+var isLoggedIn = require('./middleware/isLoggedIn')
 
 // use sessions for tracking logins
 app.use(session({
@@ -20,6 +22,11 @@ app.use(session({
         url: process.env.MONGODB_URI
     })
 }))
+
+// initialize the passport configuration and session as middleware
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(flash())
 
 // make user ID available in templates
 app.use(function (req, res, next) {
@@ -43,22 +50,21 @@ db.once('open', function () {
     console.log('really really connected')
 })
 
+// parse incoming requests
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 // setup the ejs template
 app.set('view engine', 'ejs')
 app.use(ejsLayouts)
 
 app.use(require('morgan')('dev'))
-app.use(flash())
 app.use(function (req, res, next) {
     // before every route, attach the flash messages and current user to res.locals
     res.locals.alerts = req.flash()
     res.locals.currentUser = req.user
     next()
 })
-
-// parse incoming requests
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
 
 // // // serve static files from /public
 // app.use(express.static(__dirname + '/assets'))
@@ -73,22 +79,10 @@ app.get('/', function (req, res, next) {
   res.render('index', { title: 'Home' })
 })
 
-// // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   var err = new Error('File Not Found')
-//   err.status = 404
-//   next(err)
-// })
-//
-// // error handler
-// // define as the last app.use callback
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500)
-//   res.render('error', {
-//     message: err.message,
-//     error: {}
-//   })
-// })
+app.use(isLoggedIn)
+app.get('/profile', function (req, res) {
+    res.render('profile')
+})
 
 var server
 if (process.env.NODE_ENV === 'test') {

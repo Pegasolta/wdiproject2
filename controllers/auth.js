@@ -2,21 +2,17 @@ var express = require('express')
 var router = express.Router()
 var User = require("../models/user")
 var mid = require('../middleware/isLoggedIn')
+var passport = require('../config/passport')
 
-// GET /profile
-router.get('/profile', mid.requiresLogin, function (req, res, next) {
-  User.findById(req.session.userId)
-      .exec(function (error, user) {
-        if (error) {
-          return next(error)
-        } else {
-          return res.render('profile')
-        }
-      })
+// GET /logout
+router.get('/logout', function(req, res) {
+    req.logout()
+    req.flash('success', 'You have logged out')
+    res.redirect('/')
 })
 
 // GET /signup
-router.get('/signup', function (req, res) {
+router.get('/signup', function(req, res) {
     res.render('signup')
 })
 
@@ -28,9 +24,8 @@ router.post('/signup', function (req, res, next) {
         req.body.confirmPassword) {
         // confirm that user typed same password twice
         if (req.body.password !== req.body.confirmPassword) {
-            var err = new Error('Passwords do not match.')
-            err.status = 400
-            return next(err)
+          req.flash('error', 'Passwords do not match')
+          return res.redirect('/signup')
         }
 
         // create object with form input
@@ -40,57 +35,36 @@ router.post('/signup', function (req, res, next) {
             password: req.body.password
         })
 
-        // use schema's `create` method to insert document into Mongo
+        // use schema's `save` method to insert document into Mongo
         newUser.save(function (error, user) {
-            if (error) {
-                return next(error)
-            } else {
-                req.session.userId = user._id
-                res.redirect("profile")
-            }
-        })
+          if (error) {
+              req.flash('error', 'Could not create user account, contact Felix')
+              res.redirect('/signup')
+          } else {
+              passport.authenticate('local', {
+                  successRedirect: '/profile',
+                  successFlash: 'Account created and logged in'
+              })(req, res)
+          }
+      })
 
     } else {
-        var err = new Error('All fields required.')
-        err.status = 400
-        return next(err)
+      req.flash('error', 'All fields required')
+      return res.redirect('/signup')
     }
 })
 
-
 // GET /login
-router.get('/login', function (req, res) {
+router.get('/login', function(req, res) {
     res.render('login')
 })
 
 // POST /login
-router.post('/login', function (req, res, next) {
-  if (req.body.email && req.body.password) {
-    User.authenticate(req.body.email, req.body.password, function (error, user) {
-      if (error || !user) {
-        var err = new Error('Wrong email or password.')
-        err.status = 401
-        return next(err)
-      } else {
-        req.session.userId = user._id
-        return res.redirect('/profile')
-      }
-    })
-  } else {
-    var err = new Error('Email and password are required.')
-    err.status = 401
-    return next(err)
-  }
-})
-
-// GET /about
-router.get('/about', function(req, res, next) {
-  return res.render('about', { title: 'About' });
-});
-
-// GET /contact
-router.get('/contactus', function(req, res, next) {
-  return res.render('contactus', { title: 'Contact' });
-});
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/profile',
+    failureRedirect: '/login',
+    failureFlash: 'Invalid username and/or password',
+    successFlash: 'You have logged in'
+}))
 
 module.exports = router
