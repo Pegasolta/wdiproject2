@@ -69,7 +69,7 @@ router.post('/login', passport.authenticate('local', {
 
 // LOGGED IN ROUTE TYPES
 router.use(isLoggedIn)
-router.get('/backend/admin', function(req, res) {
+router.get('/admin', function(req, res) {
     res.render('backend/admin')
 })
 
