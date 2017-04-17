@@ -2,17 +2,18 @@ var express = require('express')
 var router = express.Router()
 var User = require("../models/user")
 var passport = require('../config/passport')
+var isLoggedIn = require("../middleware/isLoggedIn")
 
 // GET /logout
 router.get('/logout', function (req, res) {
     req.logout()
     req.flash('success', 'You have logged out')
-    res.redirect('/')
+    res.redirect('/backend')
 })
 
 // GET /signup
 router.get('/signup', function (req, res) {
-    res.render('signup')
+    res.render('backend/signup')
 })
 
 // POST /signup
@@ -24,7 +25,7 @@ router.post('/signup', function (req, res, next) {
         // confirm that user typed same password twice
         if (req.body.password !== req.body.confirmPassword) {
           req.flash('error', 'Passwords do not match')
-          return res.redirect('/signup')
+          return res.redirect('/backend/signup')
         }
 
         // create object with form input
@@ -38,10 +39,10 @@ router.post('/signup', function (req, res, next) {
         newUser.save(function (error, user) {
           if (error) {
               req.flash('error', 'Could not create user account, contact Felix')
-              res.redirect('/signup')
+              res.redirect('/backend/signup')
           } else {
               passport.authenticate('local', {
-                  successRedirect: '/profile',
+                  successRedirect: '/backend/admin',
                   successFlash: 'Account created and logged in'
               })(req, res)
           }
@@ -49,19 +50,19 @@ router.post('/signup', function (req, res, next) {
 
     } else {
       req.flash('error', 'All fields required')
-      return res.redirect('/signup')
+      return res.redirect('/backend/signup')
     }
 })
 
 // GET /login
 router.get('/login', function (req, res) {
-    res.render('login')
+    res.render('backend/login')
 })
 
 // POST /login
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/profile',
-    failureRedirect: '/login',
+    successRedirect: '/backend/admin',
+    failureRedirect: '/backend/login',
     failureFlash: 'Invalid username and/or password',
     successFlash: 'You have logged in'
 }))

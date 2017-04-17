@@ -12,6 +12,7 @@ var methodOverride = require('method-override')
 var flash = require('connect-flash')
 var passport = require('./config/passport')
 var isLoggedIn = require('./middleware/isLoggedIn')
+var path = require("path")
 
 // use sessions for tracking logins
 app.use(session({
@@ -29,29 +30,31 @@ app.use(passport.session())
 app.use(flash())
 
 // make user ID available in templates
-app.use(function (req, res, next) {
-  res.locals.currentUser = req.session.userId
-  next()
+app.use(function(req, res, next) {
+    res.locals.currentUser = req.session.userId
+    next()
 })
 
 // mongoose setup
 if (process.env.NODE_ENV === 'test') {
-  mongoose.connect('mongodb://localhost/wdi-project2')
+    mongoose.connect('mongodb://localhost/wdi-project2')
 } else {
-  mongoose.connect(process.env.MONGODB_URI)
+    mongoose.connect(process.env.MONGODB_URI)
 }
 // mongoose.Promise = global.promise
 
 // check if our connection is okay
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function () {
+db.once('open', function() {
     // we're connected!
     console.log('really really connected')
 })
 
 // parse incoming requests
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
 app.use(bodyParser.json())
 
 // setup the ejs template
@@ -59,29 +62,42 @@ app.set('view engine', 'ejs')
 app.use(ejsLayouts)
 
 app.use(require('morgan')('dev'))
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     // before every route, attach the flash messages and current user to res.locals
     res.locals.alerts = req.flash()
     res.locals.currentUser = req.user
     next()
 })
 
-// // // serve static files from /public
-// app.use(express.static(__dirname + '/assets'))
+// // serve static files from /assets
+app.use(express.static(path.join(__dirname, '/assets')))
 
 // setup the method override
 app.use(methodOverride('_method'))
 
-// include controllers
-app.use('/', require('./controllers/auth'))
+// CONTROLLERS
+app.use('/backend', require('./controllers/backendadmin'))
 
-app.get('/', function (req, res, next) {
-  res.render('index', { title: 'Home' })
+// INITIAL ROUTES
+app.get('/backend', function(req, res, next) {
+    res.render('backend', {
+        title: 'Anywhr Backend'
+    })
+    return
 })
 
+app.get("/", function(req, res, next) {
+    res.render("userHome", {
+        title: "Travel Anywhr"
+    })
+    return
+})
+
+// LOGGED IN ROUTE TYPES
 app.use(isLoggedIn)
-app.get('/profile', function (req, res) {
-    res.render('profile')
+app.get('/backend/admin', function(req, res) {
+    console.log(req.body);
+    res.render('backend/admin')
 })
 
 var server
