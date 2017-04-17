@@ -67,4 +67,10 @@ router.post('/login', passport.authenticate('local', {
     successFlash: 'You have logged in'
 }))
 
+// LOGGED IN ROUTE TYPES
+router.use(isLoggedIn)
+router.get('/backend/admin', function(req, res) {
+    res.render('backend/admin')
+})
+
 module.exports = router

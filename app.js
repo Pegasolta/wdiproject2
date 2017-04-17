@@ -11,7 +11,7 @@ var MongoStore = require('connect-mongo')(session)
 var methodOverride = require('method-override')
 var flash = require('connect-flash')
 var passport = require('./config/passport')
-var isLoggedIn = require('./middleware/isLoggedIn')
+// var isLoggedIn = require('./middleware/isLoggedIn')
 var path = require("path")
 
 // use sessions for tracking logins
@@ -62,7 +62,7 @@ app.set('view engine', 'ejs')
 app.use(ejsLayouts)
 
 app.use(require('morgan')('dev'))
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     // before every route, attach the flash messages and current user to res.locals
     res.locals.alerts = req.flash()
     res.locals.currentUser = req.user
@@ -75,11 +75,8 @@ app.use(express.static(path.join(__dirname, '/assets')))
 // setup the method override
 app.use(methodOverride('_method'))
 
-// CONTROLLERS
-app.use('/backend', require('./controllers/backendadmin'))
-
 // INITIAL ROUTES
-app.get('/backend', function(req, res, next) {
+app.get('/backend', function (req, res, next) {
     res.render('backend', {
         title: 'Anywhr Backend'
     })
@@ -93,12 +90,9 @@ app.get("/", function(req, res, next) {
     return
 })
 
-// LOGGED IN ROUTE TYPES
-app.use(isLoggedIn)
-app.get('/backend/admin', function(req, res) {
-    console.log(req.body);
-    res.render('backend/admin')
-})
+// CONTROLLERS
+app.use('/holiday-styles', require('./controllers/checkout'))
+app.use('/backend', require('./controllers/backendadmin'))
 
 var server
 if (process.env.NODE_ENV === 'test') {
