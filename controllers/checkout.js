@@ -15,9 +15,8 @@ router.post('/:categoryId/:budgetId', function(req, res) {
         })
 
         // use schema's `save` method to insert document into Mongo
-        newOrder.save(function(error, user) {
+        newOrder.save(function (error, user) {
             if (error) {
-              console.log('err', error)
                 req.flash('error', 'Could not place order, contact support (hello@anywhr.co)')
                 res.redirect(req.params.budgetId)
             } else {

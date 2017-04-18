@@ -1,6 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var User = require("../models/user")
+var Order = require("../models/order")
 var passport = require('../config/passport')
 var isLoggedIn = require("../middleware/isLoggedIn")
 
@@ -24,8 +25,8 @@ router.post('/signup', function (req, res, next) {
         req.body.confirmPassword) {
         // confirm that user typed same password twice
         if (req.body.password !== req.body.confirmPassword) {
-          req.flash('error', 'Passwords do not match')
-          return res.redirect('/backend/signup')
+            req.flash('error', 'Passwords do not match')
+            return res.redirect('/backend/signup')
         }
 
         // create object with form input
@@ -37,20 +38,20 @@ router.post('/signup', function (req, res, next) {
 
         // use schema's `save` method to insert document into Mongo
         newUser.save(function (error, user) {
-          if (error) {
-              req.flash('error', 'Could not create user account, contact Felix')
-              res.redirect('/backend/signup')
-          } else {
-              passport.authenticate('local', {
-                  successRedirect: '/backend/admin',
-                  successFlash: 'Account created and logged in'
-              })(req, res)
-          }
-      })
+            if (error) {
+                req.flash('error', 'Could not create user account, contact Felix')
+                res.redirect('/backend/signup')
+            } else {
+                passport.authenticate('local', {
+                    successRedirect: '/backend/admin',
+                    successFlash: 'Account created and logged in'
+                })(req, res)
+            }
+        })
 
     } else {
-      req.flash('error', 'All fields required')
-      return res.redirect('/backend/signup')
+        req.flash('error', 'All fields required')
+        return res.redirect('/backend/signup')
     }
 })
 
@@ -69,8 +70,18 @@ router.post('/login', passport.authenticate('local', {
 
 // LOGGED IN ROUTE TYPES
 router.use(isLoggedIn)
-router.get('/admin', function(req, res) {
-    res.render('backend/admin')
+router.get('/admin', function (req, res) {
+  console.log("admin route runs")
+    Order.find([],function (err, orderAll) {
+      if (err) {
+        console.log(err);
+          req.flash('error', 'Could not load orders')
+        } else {
+          res.render("backend/admin", {
+            orderAll: orderAll
+          })
+        }
+    })
 })
 
 module.exports = router

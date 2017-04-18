@@ -1,4 +1,19 @@
-
 <h1>Anywhr Admin</h1>
 <% include ../partials/adminnavbar %>
-// Render Database display of Orders here
+    // Render Database display of Orders here
+    <table>
+        <tr>
+            <th>Duration</th>
+            <th>Pax</th>
+        </tr>
+        <% orderAll.forEach(function(order) { %>
+            <tr>
+                <td>
+                    <%= order.duration %>
+                </td>
+                <td>
+                    <%= order.pax %>
+                </td>
+            </tr>
+            <% }) %>
+    </table>

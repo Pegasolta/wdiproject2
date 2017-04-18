@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'test') {
 } else {
     mongoose.connect(process.env.MONGODB_URI)
 }
-// mongoose.Promise = global.promise
+mongoose.Promise = global.Promise
 
 // check if our connection is okay
 var db = mongoose.connection
