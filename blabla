@@ -1,0 +1,7 @@
+(
+function(){
+var table = $('.dataTable');
+table.DataTable().destroy();
+table.DataTable({ bPaginate: false });
+}
+)()

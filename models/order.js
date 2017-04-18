@@ -3,24 +3,18 @@ var bcrypt = require('bcryptjs')
 var emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
 
 var OrderSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        unique: true,
-        required: true,
-        lowercase: true,
-        trim: true,
-        match: emailRegex
-    },
-    name: {
-        type: String,
+    duration: {
+        type: Number,
         required: true,
         trim: true
     },
-    password: {
-        type: String,
-        required: true
+    pax: {
+        type: Number,
+        required: true,
+        trim: true
     }
-});
+})
+
 OrderSchema.pre('save', function(next) {
     var order = this
 
@@ -35,7 +29,7 @@ OrderSchema.pre('save', function(next) {
     next()
 })
 
-OrderSchema.methods.validPassword = function(password) {
+OrderSchema.methods.validPassword = function (password) {
     // Compare is a bcrypt method that will return a boolean,
     return bcrypt.compareSync(password, this.password)
 }
