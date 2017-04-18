@@ -1,5 +1,5 @@
 FRONTEND
-Displaying same checkout form to all categories and budgets//
+Displaying dynamic content based on URL loaded
 
 Displaying same payment form to all categories and budgets
 
@@ -10,4 +10,10 @@ Fetching prices from database based on user input
 Credit card validation
 
 BACKEND
-Display all orders on admin page//
+Filter of orders in backend
+
+Edit Orders in Backend
+
+Change Password function
+
+Creating extra DB to store SKU info 

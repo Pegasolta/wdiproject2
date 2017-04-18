@@ -3,8 +3,8 @@ var router = express.Router()
 var Order = require("../models/order")
 var path = require("path")
 
-// POST /CHECKOUT FORM
-router.post('/:categoryId/:budgetId', function(req, res) {
+// POST /Checkout form
+router.post('/:categoryId/:budgetId', function (req, res) {
     // res.send(req.body)
     if (req.body.duration &&
         req.body.pax) {
@@ -30,17 +30,17 @@ router.post('/:categoryId/:budgetId', function(req, res) {
     }
 })
 
-// GET /HOLIDAY STYLES
-router.get('/', function(req, res) {
+// GET /Holiday styles
+router.get('/', function (req, res) {
     res.render('holiday-styles/holidaystyles')
 })
 
-// GET /HOLIDAY STYLES ROUTES
+// GET /Holiday style routes
 router.get('/:categoryId', function (req, res) {
     res.render(path.join('holiday-styles', req.params.categoryId, req.params.categoryId))
 })
 
-router.get('/:categoryId/:budgetId', function(req, res) {
+router.get('/:categoryId/:budgetId', function (req, res) {
     res.render(path.join('holiday-styles', req.params.categoryId, req.params.budgetId), {
         categoryId: req.params.categoryId,
         budgetId: req.params.budgetId

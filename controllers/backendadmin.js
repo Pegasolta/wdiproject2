@@ -64,17 +64,20 @@ router.get('/login', function (req, res) {
 router.post('/login', passport.authenticate('local', {
     successRedirect: '/backend/admin',
     failureRedirect: '/backend/login',
-    failureFlash: 'Invalid username and/or password',
+    failureFlash: passport.message,
     successFlash: 'You have logged in'
 }))
 
-// LOGGED IN ROUTE TYPES
+// PUT /Forget Password
+router.put("/reset", )
+
+
 router.use(isLoggedIn)
+// LOGGED IN ROUTE TYPES
+// GET / Admin page with All Orders
 router.get('/admin', function (req, res) {
-  console.log("admin route runs")
-    Order.find([],function (err, orderAll) {
+    Order.find([], function (err, orderAll) {
       if (err) {
-        console.log(err);
           req.flash('error', 'Could not load orders')
         } else {
           res.render("backend/admin", {

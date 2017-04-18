@@ -50,10 +50,10 @@ passport.use(new LocalStrategy({
         if (err) return done(err)
 
         // If no user is found
-        if (!user) return done(null, false)
+        if (!user) return done(null, false, { message: "Incorrect email"})
 
         // Check if the password is correct
-        if (!user.validPassword(password)) return done(null, false)
+        if (!user.validPassword(password)) return done(null, false, { message: "Incorrect password"})
 
         return done(null, user)
     })
