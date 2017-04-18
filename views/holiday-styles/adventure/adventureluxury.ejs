@@ -1,15 +1,10 @@
-<h2>Adventure Luxury</h2>
+<div class="header">
+  <% include ../../partials/usernavbar %>
+  <h2>Adventure Luxury</h2>
+</div>
 
-<form action="/adventure/luxury" method="POST">
-  <div class="form-group">
-    <label for="duration">Duration</label>
-    <input id="durationSelector" class="form-control" type="number" name="duration">
-  </div>
+<div class="">
 
-  <div class="form-group">
-    <label for="pax">No. of Pax</label>
-    <input id="paxSelector" class="form-control" type="number" name="pax">
-  </div>
+<% include ../../partials/checkoutform %>
 
-  <input class="btn btn-primary" type="submit">
-</form>
+</div>

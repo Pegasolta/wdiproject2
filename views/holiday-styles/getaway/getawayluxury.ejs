@@ -1,15 +1,11 @@
-<h2>Getaway Luxury</h2>
 
-<form action="/getaway/budget" method="POST">
-  <div class="form-group">
-    <label for="duration">Duration</label>
-    <input id="durationSelector" class="form-control" type="number" name="duration">
-  </div>
+<div class="header">
+  <% include ../../partials/usernavbar %>
+  <h2>Getaway Luxury</h2>
+</div>
 
-  <div class="form-group">
-    <label for="pax">No. of Pax</label>
-    <input id="paxSelector" class="form-control" type="number" name="pax">
-  </div>
+<div class="">
 
-  <input class="btn btn-primary" type="submit">
-</form>
+<% include ../../partials/checkoutform %>
+
+</div>

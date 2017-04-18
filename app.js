@@ -30,7 +30,7 @@ app.use(passport.session())
 app.use(flash())
 
 // make user ID available in templates
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.locals.currentUser = req.session.userId
     next()
 })
@@ -70,7 +70,7 @@ app.use(function (req, res, next) {
 })
 
 // // serve static files from /assets
-app.use(express.static(path.join(__dirname, '/assets')))
+// app.use(express.static('/assets'))
 
 // setup the method override
 app.use(methodOverride('_method'))

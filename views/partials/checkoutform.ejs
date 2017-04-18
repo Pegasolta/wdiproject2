@@ -1,5 +1,5 @@
 <div class="checkoutform">
-  <form action="/checkoutform" method="POST">
+  <form action="/holiday-styles/<%= categoryId %>/<%= budgetId %>" method="POST">
     <div class="form-group">
       <label for="duration">Duration</label>
       <input id="durationSelector" class="form-control" type="number" name="duration">
@@ -10,6 +10,6 @@
       <input id="paxSelector" class="form-control" type="number" name="pax">
     </div>
 
-    <input class="btn btn-primary" type="submit">
+    <input class="btn btn-primary" type="submit" value="Book Now">
   </form>
 </div>
