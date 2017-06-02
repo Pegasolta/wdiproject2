@@ -3,6 +3,7 @@
 Front end functionality to book trips with duration and no of pax. Admins are able to login and see new bookings that come in. 
 
 Consumer Facing: anywhr.herokuapp.com
+
 Admin: anywhr.herokuapp.com/backend
 
 You can just make a new account to access the backend. 
